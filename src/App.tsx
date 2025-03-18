@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useMemo, useState} from 'react';
 import './App.css';
+import {ThemeProvider} from "@mui/material";
+import MainRouter from "./routes/MainRouter";
+import CssBaseline from "@mui/material/CssBaseline/CssBaseline";
+import {darkTheme, lightTheme} from "./theme/theme";
+import ThemeModeProvider from "./theme/themeContext";
+import {useAppSelector} from "./store/hooks";
+import {Theme} from "@mui/material/styles/createThemeNoVars";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const themeMode = useAppSelector(state => state.theme.mode);
+
+    let theme = useMemo(() => {
+        localStorage.setItem('themeMode', themeMode);
+        return themeMode === 'light' ? lightTheme : darkTheme
+    }, [themeMode]);
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline/>
+            <MainRouter/>
+        </ThemeProvider>
+    )
 }
 
 export default App;
