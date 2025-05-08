@@ -5,12 +5,12 @@ interface ThemeState {
     mode: PaletteMode;
 }
 
-const getThemeModelLocalStorage = () => {
-    return localStorage.getItem('themeMode') || 'dark';
+const getThemeModeLocalStorage = () => {
+    return localStorage.getItem('themeMode') || 'light';
 };
 
 const initialState: ThemeState = {
-    mode: getThemeModelLocalStorage() as PaletteMode,
+    mode: getThemeModeLocalStorage() as PaletteMode,
 };
 
 

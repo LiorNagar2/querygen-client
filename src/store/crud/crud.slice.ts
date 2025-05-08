@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {getSelectedDatabaseLocalStorage} from "../../utils/database";
 
 // Define the structure of entity state
 interface EntityState {
@@ -10,15 +11,26 @@ interface EntityState {
     error: string | null;
 }
 
+type DatabaseColumn = {
+    name: string;
+    type: string;
+    isNullable: boolean;
+    isPrimary: boolean;
+};
+
+type DatabaseSchema = Record<string, DatabaseColumn[]>;
+
 // Define the overall state structure
 interface CrudState {
     selectedDatabaseId?: string; // Explicitly define this property
+    selectedDatabaseSchema: DatabaseSchema;
     entities: { [key: string]: EntityState }; // Store entities separately
 }
 
 // Define the initial state
 const initialState: CrudState = {
-    selectedDatabaseId: undefined,
+    selectedDatabaseId: getSelectedDatabaseLocalStorage() || undefined,
+    selectedDatabaseSchema: {},
     entities: {}
 };
 
@@ -29,6 +41,10 @@ const crudSlice = createSlice({
     reducers: {
         setSelectedDatabase: (state, action: PayloadAction<string>) => {
             state.selectedDatabaseId = action.payload;
+        },
+
+        setSelectedDatabaseSchema: (state, action: PayloadAction<DatabaseSchema>) => {
+            state.selectedDatabaseSchema = action.payload;
         },
 
         // Fetch Entities
@@ -80,6 +96,25 @@ const crudSlice = createSlice({
             }
         },
 
+        // Update Entity
+        startUpdateEntity: (state, action: PayloadAction<{ entity: string }>) => {
+            const { entity } = action.payload;
+            if (state.entities[entity]) {
+                state.entities[entity].loading = true;
+                state.entities[entity].error = null;
+            }
+        },
+        updateEntitySuccess: (state, action: PayloadAction<{ entity: string; updatedItem: any }>) => {
+            const { entity, updatedItem } = action.payload;
+            console.log(updatedItem);
+            if (state.entities[entity]) {
+                state.entities[entity].data = state.entities[entity].data.map(item =>
+                    item._id === updatedItem._id ? updatedItem : item
+                );
+                state.entities[entity].loading = false;
+            }
+        },
+
         // Delete Entity
         startDeleteEntity: (state, action: PayloadAction<{ entity: string }>) => {
             const { entity } = action.payload;
@@ -115,9 +150,12 @@ export const {
     startCreateEntity,
     createEntitySuccess,
     createEntityFailed,
+    startUpdateEntity,
+    updateEntitySuccess,
     startDeleteEntity,
     deleteEntitySuccess,
     deleteEntityFailed,
+    setSelectedDatabaseSchema
 } = crudSlice.actions;
 
 // Export reducer

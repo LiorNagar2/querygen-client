@@ -33,6 +33,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import {ThemeModeContext} from "../../theme/themeContext";
 import {toggleThemeMode} from '../../store/theme/theme.slice';
 import Logo from '../../logo.png';
+import {setSelectedDatabaseLocalStorage} from "../../utils/database";
 
 const drawerWidth = 240;
 
@@ -51,13 +52,15 @@ export default function DashboardLayout(props: Props) {
     const themeMode = useAppSelector((state) => state.theme.mode);
 
     const [databaseOptions, setDatabaseOptions] = React.useState<SelectMenuOption[]>([]);
-    const selectedDatabase = useAppSelector(selectSelectedDatabaseId);
+    const selectedDatabaseId = useAppSelector(selectSelectedDatabaseId);
 
     useEffect(() => {
-        if (selectedDatabase) {
-            dispatch(connectToDatabase(selectedDatabase));
+        if (selectedDatabaseId) {
+            dispatch(fetchEntities(`queries`, `database/${selectedDatabaseId}/queries`));
+            dispatch(connectToDatabase(selectedDatabaseId));
+            setSelectedDatabaseLocalStorage(selectedDatabaseId);
         }
-    }, [selectedDatabase]);
+    }, [selectedDatabaseId]);
 
     useEffect(() => {
         const dbs: SelectMenuOption[] = data?.map((db: any) => {
@@ -67,7 +70,7 @@ export default function DashboardLayout(props: Props) {
             }
         }) || [];
         setDatabaseOptions(dbs);
-        dispatch(setSelectedDatabase(dbs[0]?.value));
+        dispatch(setSelectedDatabase(selectedDatabaseId || dbs[0]?.value));
     }, [data]);
 
     useEffect(() => {
@@ -102,9 +105,9 @@ export default function DashboardLayout(props: Props) {
             component="main"
             sx={{
                 flexGrow: 1,
-                mt: 8, // Ensures content starts below the AppBar
             }}
         >
+            <Toolbar/>
             <Toolbar>
                 <Button
                     variant={'outlined'}
@@ -157,7 +160,7 @@ export default function DashboardLayout(props: Props) {
                     >
                         <MenuIcon/>
                     </IconButton>
-                   {/* <Typography variant="h6" noWrap component="div">
+                    {/* <Typography variant="h6" noWrap component="div">
                         My Awesome Database Dashboard
                     </Typography>*/}
                     {/*<Box
@@ -170,8 +173,8 @@ export default function DashboardLayout(props: Props) {
                         src={Logo}
                     />*/}
 
-                    <Box component="a" href="/" sx={{ display: "flex"}}>
-                        <img src={Logo} alt="QuerygenAI" style={{ height: 64, width: "auto", padding: '.8rem 0' }} />
+                    <Box component="a" href="/" sx={{display: "flex"}}>
+                        <img src={Logo} alt="QuerygenAI" style={{height: 64, width: "auto", padding: '.8rem 0'}}/>
                     </Box>
 
                     <Box sx={{display: "flex", alignItems: "center"}}>
@@ -187,7 +190,7 @@ export default function DashboardLayout(props: Props) {
                         </IconButton>
                         <SelectMenu
                             //label="Select Database"
-                            value={selectedDatabase}
+                            value={selectedDatabaseId}
                             options={databaseOptions}
                             onChange={handleDatabaseChange}
                             icon={<CloudIcon color={'primary'}/>} // ✅ Custom icon
@@ -228,7 +231,7 @@ export default function DashboardLayout(props: Props) {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    p: 3,
+                    /*p: 3,*/
                     width: {sm: `calc(100% - ${drawerWidth}px)`},
                 }}
             >

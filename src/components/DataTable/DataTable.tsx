@@ -1,8 +1,14 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    TablePagination, Paper, Typography
+    TablePagination, Typography
 } from '@mui/material';
+import IconButton from "@mui/material/IconButton";
+
+interface DataTableAction {
+    icon: ReactNode,
+    onClick: (row: any) => void;
+}
 
 interface DataTableProps {
     data: any[];
@@ -10,9 +16,11 @@ interface DataTableProps {
     rowsPerPage: number;
     setPage: (page: number) => void;
     setRowsPerPage: (rowsPerPage: number) => void;
+    size?: 'small' | 'medium';
+    actions?: DataTableAction[];
 }
 
-const DataTable: React.FC<DataTableProps> = ({data, page, rowsPerPage, setPage, setRowsPerPage}) => {
+const DataTable: React.FC<DataTableProps> = ({data, page, rowsPerPage, setPage, setRowsPerPage, size, actions}) => {
     if (data.length === 0) {
         return <Typography variant="h6" sx={{padding: 2, textAlign: "center"}}>No data available</Typography>;
     }
@@ -22,12 +30,15 @@ const DataTable: React.FC<DataTableProps> = ({data, page, rowsPerPage, setPage, 
     return (
         <div>
             <TableContainer>
-                <Table>
+                <Table size={size || 'medium'}>
                     <TableHead>
                         <TableRow>
                             {columns.map((key) => (
                                 <TableCell key={key} sx={{fontWeight: "bold"}}>{key}</TableCell>
                             ))}
+                            {actions && (
+                                <TableCell sx={{fontWeight: "bold"}}>Actions</TableCell>
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -42,6 +53,9 @@ const DataTable: React.FC<DataTableProps> = ({data, page, rowsPerPage, setPage, 
                                     }}>
                                         {String(row[col])}
                                     </TableCell>
+                                ))}
+                                {actions && actions.map((action, index) => (
+                                    <IconButton onClick={() => action.onClick(row)}>{action.icon}</IconButton>
                                 ))}
                             </TableRow>
                         ))}

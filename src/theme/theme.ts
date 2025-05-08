@@ -1,5 +1,6 @@
 import {createTheme, PaletteOptions} from "@mui/material/styles";
 import grey from "@mui/material/colors/grey";
+import getPalette, {invertGrayscale} from "./palette";
 
 const invertColor = (color: string) => {
     if (!/^#([0-9A-F]{3}){1,2}$/i.test(color)) return color;
@@ -24,13 +25,13 @@ const palette: Partial<PaletteOptions> = {
     mode: "light",
     primary: {main: "#002c6e", contrastText: "#ffffff"},
     secondary: {main: "#f59c15", contrastText: "#ffffff"},
-    background: {default: "#fcfcfc", paper: "#f5f6fa"},
+    background: {default: "#fbfbfc", paper: "#ffffff"},
     text: {primary: "#000000", secondary: "#555555"},
-    error: {main: "#d32f2f"},
+    /*error: {main: "#d32f2f"},
     warning: {main: "#f57c00"},
     info: {main: "#0288d1"},
     success: {main: "#388e3c"},
-    divider: "#e0e0e0",
+    divider: "#e0e0e0",*/
     grey: { // Add MUI grey colors explicitly
         50: grey[50],
         100: grey[100],
@@ -46,8 +47,9 @@ const palette: Partial<PaletteOptions> = {
 };
 
 export const lightTheme = createTheme({
-    palette,
+    palette: getPalette('light'),
     typography: {
+        fontSize: 14,
         fontFamily: '"Roboto", "Arial", sans-serif',
         h1: {fontSize: "2.5rem", fontWeight: 700},
         h2: {fontSize: "2rem", fontWeight: 700},
@@ -72,21 +74,26 @@ export const lightTheme = createTheme({
                 }),
             },
         },
+        MuiInputLabel:{
+            styleOverrides: {
+                root: ({ theme }) => {
+                    //const gray = invertGrayscale(theme.palette.mode);
+                    return {
+                        transform: 'none',
+                        position: 'static',
+                        marginBottom: theme.spacing(0.5),
+                        fontSize: '0.875rem',
+                        //color: gray[700],
+                    };
+                },
+            },
+        },
     },
-    /*shadows: [
-        "none",
-        "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)",
-    ], // Keeping only basic shadows for simplicity*/
 });
 
 // Generate dark theme by inverting the light theme
 export const darkTheme = createTheme({
-    palette: {
-        mode: "dark",
-        ...deepInverse(lightTheme.palette),
-        primary: palette.primary, // keep primary color for darkMode
-        secondary: palette.secondary, // keep secondary color for darkMode
-    },
+    palette: getPalette('dark'), // keep secondary color for darkMode
     typography: {...lightTheme.typography},
     breakpoints: {...lightTheme.breakpoints},
     spacing: lightTheme.spacing,
@@ -94,7 +101,7 @@ export const darkTheme = createTheme({
     shadows: [...lightTheme.shadows], // Copy the shadows
     components: {
         ...lightTheme.components,
-        MuiOutlinedInput: {
+        /*MuiOutlinedInput: {
             styleOverrides: {
                 root: {
                     "& .MuiOutlinedInput-notchedOutline": {
@@ -102,9 +109,20 @@ export const darkTheme = createTheme({
                     },
                 },
             },
+        },*/
+        MuiAppBar:{
+            defaultProps: {
+                color: 'primary',
+                enableColorOnDark: true, // 👈 this is essential for dark mode
+            },
+            styleOverrides: {
+                root: {
+                    backgroundImage: 'none', // 👈 removes the paper-like overlay
+                },
+            },
         },
     },
 });
 
-console.log(lightTheme.shadows);
+//console.log(lightTheme.shadows);
 

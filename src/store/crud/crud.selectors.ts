@@ -24,7 +24,7 @@ export const selectEntityPagination = (state: RootState, entity: string) => ({
 });
 
 // Select the currently selected database
-export const selectSelectedDatabaseId = (state: RootState) => state.crud.selectedDatabaseId || '';
+export const selectSelectedDatabaseId = (state: RootState): string => state.crud.selectedDatabaseId || '';
 
 export const selectDatabases = (state: RootState) => state.crud.entities['database'] || [];
 

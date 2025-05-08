@@ -26,6 +26,7 @@ export interface Field {
     columnSize?: number; // Grid column size (1-12)
     validationRules?: Yup.StringSchema | Yup.NumberSchema | Yup.BooleanSchema | Yup.DateSchema; // Yup validation schema
     fetchOptions?: () => Promise<{ label: string; value: any }[]>; // Async options for autocomplete
+    defaultValue?: any;
 }
 
 interface FormGeneratorProps {
@@ -57,14 +58,16 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
 
     useEffect(() => {
         if (Object.keys(formData).length === 0) {
-            setFormData(
-                fields.reduce((acc, field) => {
-                    acc[field.name] = initialValues[field.name] ?? (field.type === "checkbox" ? false : "");
-                    return acc;
-                }, {} as Record<string, any>)
-            );
+            const initialFormValues = fields.reduce((acc, field) => {
+                acc[field.name] =
+                    initialValues[field.name] ??
+                        field.defaultValue ??
+                            (field.type === "checkbox" ? false : "");
+                return acc;
+            }, {} as Record<string, any>);
+            setFormData(initialFormValues);
         }
-    }, [initialValues]); // Only reset when initialValues change
+    }, [initialValues, fields]); // Only reset when initialValues change
 
     const handleChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<any>
