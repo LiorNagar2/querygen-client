@@ -34,7 +34,7 @@ export default function QueryDatabase() {
         generateSqlDialogOpen: false,
         graphType: 'bar',
         labelColumn: '',
-        valueColumn: '',
+        valueColumns: [] as string[],
         visibility: 'public',
         schedule: '',
     });
@@ -51,9 +51,8 @@ export default function QueryDatabase() {
                     name: queryData.name || '',
                     sqlQuery: queryData.query || '',
                     labelColumn: queryData.graphConfig?.labelColumn || '',
-                    valueColumn: queryData.graphConfig?.valueColumn || '',
+                    valueColumns: queryData.graphConfig?.valueColumns || [],
                     graphType: queryData.graphConfig?.chartType || '',
-
                 });
             }
         }
@@ -93,7 +92,7 @@ export default function QueryDatabase() {
                 graphConfig: {
                     chartType: state.graphType,
                     labelColumn: state.labelColumn,
-                    valueColumn: state.valueColumn,
+                    valueColumns: state.valueColumns,
                 }
             };
 
@@ -112,7 +111,11 @@ export default function QueryDatabase() {
 
     const columns = state.queryResults.length > 0 ? Object.keys(state.queryResults[0]) : [];
     const labels = state.queryResults.map((row: any) => row[state.labelColumn] || '');
-    const data = state.queryResults.map((row: any) => Number(row[state.valueColumn]) || 0);
+
+    const series = state.valueColumns.map((col) => ({
+        data: state.queryResults.map((row: any) => Number(row[col]) || 0),
+        label: col,
+    }));
 
     const schemaData: SchemaItem[] = Object.keys(dbSchema).map((schemaName) => ({
         key: schemaName,
@@ -132,10 +135,7 @@ export default function QueryDatabase() {
             sidebar={
                 <Box>
                     <Paper variant="outlined" sx={{ mt: 4, p: 2 }}>
-                        <Typography variant="subtitle1" gutterBottom>
-                            Publish Settings
-                        </Typography>
-
+                        <Typography variant="subtitle1" gutterBottom>Publish Settings</Typography>
                         <FormControl fullWidth sx={{ mb: 2 }}>
                             <InputLabel>Visibility</InputLabel>
                             <Select
@@ -147,7 +147,6 @@ export default function QueryDatabase() {
                                 <MenuItem value="private">Private</MenuItem>
                             </Select>
                         </FormControl>
-
                         <TextField
                             type="datetime-local"
                             fullWidth
@@ -157,11 +156,8 @@ export default function QueryDatabase() {
                             value={state.schedule}
                             onChange={(e) => updateState({ schedule: e.target.value })}
                         />
-
                         <Box display="flex" justifyContent="space-between">
-                            <Button variant="outlined" color="primary" size="small">
-                                Save Draft
-                            </Button>
+                            <Button variant="outlined" color="primary" size="small">Save Draft</Button>
                             <Button variant="contained" color="success" onClick={saveQuery} size="small">
                                 {isEditMode ? 'Update' : 'Publish'}
                             </Button>
@@ -175,7 +171,6 @@ export default function QueryDatabase() {
             }
         >
             <Box>
-
                 <TextField
                     fullWidth
                     label="Query Name"
@@ -185,22 +180,15 @@ export default function QueryDatabase() {
                     onChange={(e) => updateState({ name: e.target.value })}
                     sx={{ mb: 2 }}
                 />
-
-                <Button
-                    variant="outlined"
-                    sx={{ mb: 2 }}
-                    onClick={() => updateState({ generateSqlDialogOpen: true })}
-                >
+                <Button variant="outlined" sx={{ mb: 2 }} onClick={() => updateState({ generateSqlDialogOpen: true })}>
                     Ask a Database Question
                 </Button>
-
                 <GenerateSQLDialog
                     open={state.generateSqlDialogOpen}
                     onClose={() => updateState({ generateSqlDialogOpen: false })}
                     onGenerate={generateSQL}
                     dbId={db?._id}
                 />
-
                 <TextField
                     fullWidth
                     multiline
@@ -230,9 +218,7 @@ export default function QueryDatabase() {
                             setRowsPerPage={(rowsPerPage) => updateState({ rowsPerPage })}
                             size="small"
                         />
-
                         <Typography variant="h6" sx={{ mt: 3 }}>Graph Configuration</Typography>
-
                         <Box sx={{ display: 'flex', gap: 2, mt: 2, mb: 2 }}>
                             <FormControl style={{ minWidth: 150 }}>
                                 <InputLabel>Label Column</InputLabel>
@@ -242,50 +228,43 @@ export default function QueryDatabase() {
                                     ))}
                                 </Select>
                             </FormControl>
-
-                            <FormControl style={{ minWidth: 150 }}>
-                                <InputLabel>Value Column</InputLabel>
-                                <Select value={state.valueColumn} onChange={(e) => updateState({ valueColumn: e.target.value })}>
+                            <FormControl style={{ minWidth: 200 }}>
+                                <InputLabel>Value Columns</InputLabel>
+                                <Select
+                                    multiple
+                                    value={state.valueColumns}
+                                    onChange={(e) => updateState({ valueColumns: e.target.value as any })}
+                                    renderValue={(selected) => selected.join(', ')}
+                                >
                                     {columns.map((col) => (
                                         <MenuItem key={col} value={col}>{col}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
-
                             <FormControl style={{ minWidth: 150 }}>
                                 <InputLabel>Chart Type</InputLabel>
                                 <Select value={state.graphType} onChange={(e) => updateState({ graphType: e.target.value })}>
                                     <MenuItem value="bar">Bar Chart</MenuItem>
                                     <MenuItem value="line">Line Chart</MenuItem>
-                                    <MenuItem value="pie">Pie Chart</MenuItem>
+                                    <MenuItem value="pie">Pie Chart (1 Value Only)</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
 
-                        {labels.length > 0 && data.length > 0 && (
+                        {labels.length > 0 && series.length > 0 && (
                             <Box sx={{ mt: 2 }}>
                                 {state.graphType === 'bar' && (
-                                    <BarChart
-                                        xAxis={[{ scaleType: 'band', data: labels }]}
-                                        series={[{ data }]}
-                                        width={600}
-                                        height={300}
-                                    />
+                                    <BarChart xAxis={[{ scaleType: 'band', data: labels }]} series={series} width={600} height={300} />
                                 )}
                                 {state.graphType === 'line' && (
-                                    <LineChart
-                                        xAxis={[{ scaleType: 'band', data: labels }]}
-                                        series={[{ data }]}
-                                        width={600}
-                                        height={300}
-                                    />
+                                    <LineChart xAxis={[{ scaleType: 'band', data: labels }]} series={series} width={600} height={300} />
                                 )}
-                                {state.graphType === 'pie' && (
+                                {state.graphType === 'pie' && state.valueColumns.length === 1 && (
                                     <PieChart
                                         series={[{
                                             data: labels.map((label, index) => ({
                                                 id: label,
-                                                value: data[index],
+                                                value: series[0].data[index],
                                                 label
                                             }))
                                         }]}

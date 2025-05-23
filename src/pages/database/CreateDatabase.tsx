@@ -4,6 +4,7 @@ import {useAppDispatch} from "../../store/hooks";
 import * as Yup from 'yup';
 import {createEntity} from "../../store/crud/crud.actions";
 import FormGenerator, {Field} from "../../components/Forms/FormGenerator";
+import PageContent from "../../layouts/dashboard/PageContent";
 
 const CreateDatabase = () => {
     /*return (
@@ -78,11 +79,13 @@ const CreateDatabase = () => {
     };
 
     return (
-        <FormGenerator
-            fields={fields}
-            onSubmit={handleSubmit}
-            submitText="Create"
-        />
+        <PageContent title={'New Database'} sidebar={<></>}>
+            <FormGenerator
+                fields={fields}
+                onSubmit={handleSubmit}
+                submitText="Create"
+            />
+        </PageContent>
     );
 };
 
