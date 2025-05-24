@@ -154,17 +154,21 @@ export const QueriesApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {string} dbId 
          * @param {string} id 
          * @param {UpdateQueryDto} updateQueryDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        queriesControllerUpdateQuery: async (id: string, updateQueryDto: UpdateQueryDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        queriesControllerUpdateQuery: async (dbId: string, id: string, updateQueryDto: UpdateQueryDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'dbId' is not null or undefined
+            assertParamExists('queriesControllerUpdateQuery', 'dbId', dbId)
             // verify required parameter 'id' is not null or undefined
             assertParamExists('queriesControllerUpdateQuery', 'id', id)
             // verify required parameter 'updateQueryDto' is not null or undefined
             assertParamExists('queriesControllerUpdateQuery', 'updateQueryDto', updateQueryDto)
             const localVarPath = `/database/{dbId}/queries/{id}`
+                .replace(`{${"dbId"}}`, encodeURIComponent(String(dbId)))
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -236,13 +240,14 @@ export const QueriesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} dbId 
          * @param {string} id 
          * @param {UpdateQueryDto} updateQueryDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async queriesControllerUpdateQuery(id: string, updateQueryDto: UpdateQueryDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.queriesControllerUpdateQuery(id, updateQueryDto, options);
+        async queriesControllerUpdateQuery(dbId: string, id: string, updateQueryDto: UpdateQueryDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Query>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.queriesControllerUpdateQuery(dbId, id, updateQueryDto, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -287,13 +292,14 @@ export const QueriesApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @param {string} dbId 
          * @param {string} id 
          * @param {UpdateQueryDto} updateQueryDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        queriesControllerUpdateQuery(id: string, updateQueryDto: UpdateQueryDto, options?: any): AxiosPromise<void> {
-            return localVarFp.queriesControllerUpdateQuery(id, updateQueryDto, options).then((request) => request(axios, basePath));
+        queriesControllerUpdateQuery(dbId: string, id: string, updateQueryDto: UpdateQueryDto, options?: any): AxiosPromise<Query> {
+            return localVarFp.queriesControllerUpdateQuery(dbId, id, updateQueryDto, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -343,13 +349,14 @@ export class QueriesApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} dbId 
      * @param {string} id 
      * @param {UpdateQueryDto} updateQueryDto 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof QueriesApi
      */
-    public queriesControllerUpdateQuery(id: string, updateQueryDto: UpdateQueryDto, options?: AxiosRequestConfig) {
-        return QueriesApiFp(this.configuration).queriesControllerUpdateQuery(id, updateQueryDto, options).then((request) => request(this.axios, this.basePath));
+    public queriesControllerUpdateQuery(dbId: string, id: string, updateQueryDto: UpdateQueryDto, options?: AxiosRequestConfig) {
+        return QueriesApiFp(this.configuration).queriesControllerUpdateQuery(dbId, id, updateQueryDto, options).then((request) => request(this.axios, this.basePath));
     }
 }

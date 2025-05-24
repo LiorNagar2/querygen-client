@@ -13,39 +13,39 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { GraphConfig } from './graph-config';
 
 /**
  * 
  * @export
- * @interface Query
+ * @interface GraphConfig
  */
-export interface Query {
+export interface GraphConfig {
     /**
      * 
      * @type {string}
-     * @memberof Query
+     * @memberof GraphConfig
      */
-    'databaseId': string;
+    'labelColumn'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof GraphConfig
+     */
+    'valueColumns'?: Array<string>;
     /**
      * 
      * @type {string}
-     * @memberof Query
+     * @memberof GraphConfig
      */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Query
-     */
-    'query': string;
-    /**
-     * 
-     * @type {GraphConfig}
-     * @memberof Query
-     */
-    'graphConfig'?: GraphConfig;
+    'chartType'?: GraphConfigChartTypeEnum;
 }
+
+export const GraphConfigChartTypeEnum = {
+    Line: 'line',
+    Bar: 'bar',
+    Pie: 'pie'
+} as const;
+
+export type GraphConfigChartTypeEnum = typeof GraphConfigChartTypeEnum[keyof typeof GraphConfigChartTypeEnum];
+
 

@@ -2,6 +2,7 @@ import React from "react";
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import CloudIcon from '@mui/icons-material/Cloud';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 interface MenuItem {
     text: string;
@@ -22,29 +23,35 @@ export enum Pages {
     DASHBOARD__CREATE_USER = '/dashboard/create-user',
 
     QUERIES = '/queries',
-    QUERIES_NEW = '/queries/new'
+    QUERIES_NEW = '/queries/new',
+    QUERIES_GRAPHS = '/queries/graphs'
 }
 
 export const menuItems: MenuItem[] = [
     {
         text: 'Home',
         link: Pages.HOME,
-        icon: <HomeIcon/>,
+        icon: <HomeIcon />,
     },
     {
         text: 'Databases',
         link: Pages.DATABASES,
-        icon: <CloudIcon/>,
+        icon: <CloudIcon />,
     },
     {
         text: 'Queries',
         link: Pages.QUERIES,
-        icon: <CloudIcon/>,
+        icon: <CloudIcon />,
+    },
+    {
+        text: 'Query Graphs',
+        link: Pages.QUERIES_GRAPHS,
+        icon: <BarChartIcon />,
     },
     {
         text: 'Users',
         link: Pages.DASHBOARD__USERS,
-        icon: <PersonIcon/>,
+        icon: <PersonIcon />,
         title: 'Users Title'
     },
 ];

@@ -133,7 +133,7 @@ export default function QueryDatabase() {
             sidebarTopOffset={64}
             loading={isQueriesLoading}
             sidebar={
-                <Box>
+                <Box sx={{ mt: 4 }}>
                     <Paper variant="outlined" sx={{ mt: 4, p: 2 }}>
                         <Typography variant="subtitle1" gutterBottom>Publish Settings</Typography>
                         <FormControl fullWidth sx={{ mb: 2 }}>

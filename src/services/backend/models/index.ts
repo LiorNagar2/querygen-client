@@ -1,5 +1,7 @@
 export * from './create-query-dto';
 export * from './create-user-dto';
+export * from './graph-config';
+export * from './graph-config-dto';
 export * from './login-request';
 export * from './login-response';
 export * from './query';

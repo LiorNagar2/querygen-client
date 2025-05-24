@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { GraphConfigDto } from './graph-config-dto';
 
 /**
  * 
@@ -32,5 +35,11 @@ export interface UpdateQueryDto {
      * @memberof UpdateQueryDto
      */
     'query'?: string;
+    /**
+     * 
+     * @type {GraphConfigDto}
+     * @memberof UpdateQueryDto
+     */
+    'graphConfig'?: GraphConfigDto;
 }
 

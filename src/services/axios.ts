@@ -1,7 +1,7 @@
-import axios, {AxiosInstance} from "axios";
+import axios, { AxiosInstance } from "axios";
 import config from "../config/config";
-import {AuthApi, UsersApi} from "./backend";
-import {getTokenFromLocalStorage} from "../utils/token";
+import { AuthApi, UsersApi, QueriesApi, DatabaseApi } from "./backend";
+import { getTokenFromLocalStorage } from "../utils/token";
 
 const baseUrl = config.apiUrl;
 
@@ -30,6 +30,8 @@ axiosInstance.interceptors.request.use((config) => {
 const apis = {
     authApi: new AuthApi(undefined, baseUrl, axiosInstance),
     userApi: new UsersApi(undefined, baseUrl, axiosInstance),
+    queryApi: new QueriesApi(undefined, baseUrl, axiosInstance),
+    databaseApi: new DatabaseApi(undefined, baseUrl, axiosInstance),
 };
 
 export default apis;

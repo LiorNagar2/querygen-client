@@ -14,6 +14,8 @@ git_push.sh
 index.ts
 models/create-query-dto.ts
 models/create-user-dto.ts
+models/graph-config-dto.ts
+models/graph-config.ts
 models/index.ts
 models/login-request.ts
 models/login-response.ts
