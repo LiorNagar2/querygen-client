@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {getSelectedDatabaseLocalStorage} from "../../utils/database";
+import { getSelectedDatabaseLocalStorage } from "../../utils/database";
 
 // Define the structure of entity state
 interface EntityState {

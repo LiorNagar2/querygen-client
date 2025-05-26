@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { user_getUserData } from "../store/user/user.actions";
 import QueryForm from "../pages/queries/QueryForm";
 import QueryGraphs from "../pages/queries/QueryGraphs";
+import Profile from "../pages/profile/Profile";
 
 const routes: RouteObject[] = [
     {
@@ -67,6 +68,10 @@ const routes: RouteObject[] = [
                     {
                         path: '/queries/graphs',
                         element: <QueryGraphs />
+                    },
+                    {
+                        path: '/profile',
+                        element: <Profile />
                     }
                 ]
             }

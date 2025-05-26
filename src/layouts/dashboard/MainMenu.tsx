@@ -24,7 +24,9 @@ export enum Pages {
 
     QUERIES = '/queries',
     QUERIES_NEW = '/queries/new',
-    QUERIES_GRAPHS = '/queries/graphs'
+    QUERIES_GRAPHS = '/queries/graphs',
+
+    PROFILE = '/profile'
 }
 
 export const menuItems: MenuItem[] = [
